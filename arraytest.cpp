@@ -91,6 +91,7 @@ using namespace std;
 //           bool isNA = IntegerVector::is_na(e);
 //           cout << (isNA ? 0 : std::function<int64_t(IntegerVector::stored_type)>[](IntegerVector::stored_type e) {return e;});
 // }
+//[[Rcpp::export]]
 std::vector<int64_t> toStdVec(SEXP x){
   std::vector<int64_t> y;
   y = as<std::vector<int64_t> >(x);
@@ -120,7 +121,7 @@ x <- as.integer64(x)
 X <- c(x, x, x)
 Y <- c(1,2,3)
 tType(Y)
-tType(X)
+tType(x)
 # p_a(X)
 # 
 # Is_NA(x)

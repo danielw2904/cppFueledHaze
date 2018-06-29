@@ -13,7 +13,6 @@ std::vector<long long> toStdInt(SEXP x_){
     std::vector<long long> retAlt = as<std::vector<long long> >(x_);
     return retAlt;
   }
-  std::vector<long long> y;
   long long i, n = LENGTH(x_);
   long long * x = (long long *) REAL(x_);
   std::vector<long long> ret(n);
@@ -29,7 +28,8 @@ std::vector<long long> toStdInt(SEXP x_){
 return ret;
 }
 
-void pprint(std::vector<long long> x){
+template<typename T>
+void pprint(std::vector<T> x){
   int i, n = x.size();
   for(i = 0; i<n; i++){
     std::cout << x[i] << std::endl;
@@ -41,6 +41,32 @@ void getRes(SEXP x){
   pprint(toStdInt(x));
 }
 
+int64_t* rec(SEXP x){
+  int64_t * res = reinterpret_cast<int64_t*>(REAL(x));
+  return res;
+}
+
+std::vector<int64_t> Val(SEXP x){
+  size_t i, n = LENGTH(x);
+  std::vector<int64_t> res(n);
+  for(i=0; i<n; i++){
+  res[i] = rec(x)[i] == NA_INTEGER64 ? 0 : rec(x)[i];
+  };
+  return res;
+}
+
+template<typename T>
+NumericVector toNum(std::vector<T> res){
+  NumericVector out = wrap(res);
+  return out;
+}
+
+//[[Rcpp::export]]
+void getVal(SEXP x){
+  pprint( Val(x) );
+}
+
+
 
 /*** R
 library(bit64)
@@ -51,11 +77,17 @@ x <- c(x + c(1:10))
 x <- as.integer64(c(x, NA))
 x
 
-getRes(x)
+library(microbenchmark)
+resb <- microbenchmark(
+getRes(x), times = 30
+)
+valb <- microbenchmark(
+getVal(x), times = 30
+)
 
 getRes(as.integer64(1123))
-
-getRes(1) # Does not work. Requires integer64  
+getRes(as.integer64(2.5))
+getRes(1) # Just converting to long long with warning  
 
   
 ***/
