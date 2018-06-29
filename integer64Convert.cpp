@@ -8,6 +8,11 @@ using namespace Rcpp;
 
 
 std::vector<long long> toStdInt(SEXP x_){
+  if(!Rf_inherits(x_, "integer64")){
+    warning("Converting to 'long long'");
+    std::vector<long long> retAlt = as<std::vector<long long> >(x_);
+    return retAlt;
+  }
   std::vector<long long> y;
   long long i, n = LENGTH(x_);
   long long * x = (long long *) REAL(x_);
