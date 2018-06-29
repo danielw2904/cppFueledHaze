@@ -40,7 +40,6 @@ std::vector<long long> toStdInt(SEXP x_){
   long long i, n = LENGTH(x_);
   long long * x = (long long *) REAL(x_);
   std::vector<long long> ret(n);
-  std::stringstream stream;
   long long temp_;
   long long * temp = &temp_;
   for(i=0; i<n; i++){
