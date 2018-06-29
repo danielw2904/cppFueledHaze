@@ -47,6 +47,11 @@ int64_t* rec(SEXP x){
 }
 
 std::vector<int64_t> Val(SEXP x){
+  if(!Rf_inherits(x, "integer64")){
+    warning("Converting to 'long long'");
+    std::vector<int64_t> retAlt = as<std::vector<int64_t> >(x);
+    return retAlt;
+  };
   size_t i, n = LENGTH(x);
   std::vector<int64_t> res(n);
   for(i=0; i<n; i++){
@@ -73,7 +78,7 @@ library(bit64)
 x <- "9007199254740993"
 x <- as.integer64(x)
 as.numeric(x)
-x <- c(x + c(1:10))
+x <- c(x + c(1:10000))
 x <- as.integer64(c(x, NA))
 x
 
